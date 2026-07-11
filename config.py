@@ -43,8 +43,13 @@ RSS_FEEDS = [
     "https://weworkremotely.com/categories/remote-back-end-programming-jobs.rss",
     "https://weworkremotely.com/categories/remote-full-stack-programming-jobs.rss",
     "https://weworkremotely.com/categories/remote-system-administration-jobs.rss",
-    # Germany specific
-    "https://germantechjobs.de/jobs/rss"
+    
+    # DevITJobs Network (Native European Tech Boards)
+    "https://germantechjobs.de/jobs/rss",
+    "https://devitjobs.nl/jobs/rss",      # Netherlands
+    "https://swissdevjobs.ch/jobs/rss",   # Switzerland
+    "https://devitjobs.uk/jobs/rss",      # UK (Bonus)
+    "https://remoteitjobs.com/jobs/rss"   # Global Remote
 ]
 
 # --- SerpApi Google Jobs Configurations ---
