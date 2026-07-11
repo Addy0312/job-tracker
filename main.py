@@ -3,6 +3,7 @@ from fetchers import fetch_greenhouse_jobs, fetch_lever_jobs, fetch_hn_jobs, fet
 from filters import is_target_job
 from integrations import add_to_notion, send_discord_alert
 from db import JobDatabase
+import time
 
 def main():
     print("Starting Job Sourcing Pipeline...")
@@ -27,9 +28,19 @@ def main():
     all_jobs.extend(wwr_jobs)
     print(f"Fetched {len(wwr_jobs)} jobs from We Work Remotely")
         
-    google_jobs = fetch_google_jobs()
-    all_jobs.extend(google_jobs)
-    print(f"Fetched {len(google_jobs)} jobs from Google Jobs")
+    # --- Rate-Limited Google Jobs Fetcher ---
+    last_google_run = db.get_meta("google_jobs_last_run")
+    current_time = time.time()
+    COOLDOWN_SECONDS = 3 * 3600  # 3 hours
+    
+    if last_google_run and (current_time - float(last_google_run)) < COOLDOWN_SECONDS:
+        hours_left = round((COOLDOWN_SECONDS - (current_time - float(last_google_run))) / 3600, 1)
+        print(f"Skipping Google Jobs: Cooldown active ({hours_left} hours remaining).")
+    else:
+        google_jobs = fetch_google_jobs()
+        all_jobs.extend(google_jobs)
+        print(f"Fetched {len(google_jobs)} jobs from Google Jobs")
+        db.set_meta("google_jobs_last_run", str(current_time))
         
     for job in all_jobs:
         if db.is_seen(job.id):
