@@ -26,10 +26,13 @@ LOCATIONS = [
 ]
 
 GREENHOUSE_COMPANIES = [
-    "datadog", "stripe", "cloudflare", "optiver", 
+    "datadog", "stripe", "cloudflare", 
+    # "optiver", 
     "janestreet", "robinhood"
 ]
 
 LEVER_COMPANIES = [
-    "palantir", "revolut", "checkoutcom"
+    "palantir", 
+    # "revolut", 
+    # "checkoutcom"
 ]
