@@ -185,6 +185,7 @@ def fetch_google_jobs() -> List[Job]:
         "engine": "google_jobs",
         "q": query,
         "hl": "en",
+        "chips": "date_posted:3days",
         "api_key": SERPAPI_KEY
     }
     
