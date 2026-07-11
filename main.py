@@ -1,5 +1,5 @@
 from config import GREENHOUSE_COMPANIES, LEVER_COMPANIES
-from fetchers import fetch_greenhouse_jobs, fetch_lever_jobs, fetch_hn_jobs, fetch_wwr_jobs
+from fetchers import fetch_greenhouse_jobs, fetch_lever_jobs, fetch_hn_jobs, fetch_wwr_jobs, fetch_google_jobs
 from filters import is_target_job
 from integrations import add_to_notion, send_discord_alert
 from db import JobDatabase
@@ -26,6 +26,10 @@ def main():
     wwr_jobs = fetch_wwr_jobs()
     all_jobs.extend(wwr_jobs)
     print(f"Fetched {len(wwr_jobs)} jobs from We Work Remotely")
+        
+    google_jobs = fetch_google_jobs()
+    all_jobs.extend(google_jobs)
+    print(f"Fetched {len(google_jobs)} jobs from Google Jobs")
         
     for job in all_jobs:
         if db.is_seen(job.id):

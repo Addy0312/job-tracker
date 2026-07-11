@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import html
 from typing import List
 from models import Job
+from config import SERPAPI_KEY
 
 def fetch_greenhouse_jobs(company: str) -> List[Job]:
     url = f"https://boards-api.greenhouse.io/v1/boards/{company}/jobs"
@@ -169,4 +170,53 @@ def fetch_wwr_jobs() -> List[Job]:
         return jobs
     except Exception as e:
         print(f"Error fetching We Work Remotely jobs: {e}")
+        return []
+
+def fetch_google_jobs() -> List[Job]:
+    if not SERPAPI_KEY:
+        print("Warning: SERPAPI_KEY is not set. Skipping Google Jobs.")
+        return []
+        
+    # Query tailored to our primary targets
+    query = '("C++" OR "Backend" OR "Systems") AND ("Software Engineer" OR "Developer") ("Germany" OR "Netherlands" OR "Singapore" OR "Remote")'
+    
+    url = "https://serpapi.com/search.json"
+    params = {
+        "engine": "google_jobs",
+        "q": query,
+        "hl": "en",
+        "api_key": SERPAPI_KEY
+    }
+    
+    try:
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        
+        jobs: List[Job] = []
+        for job in data.get("jobs_results", []):
+            job_id = job.get("job_id", "")
+            title = job.get("title", "")
+            company = job.get("company_name", "")
+            location = job.get("location", "Unknown")
+            
+            # Google Jobs provides apply links, we grab the first one or fallback to the share link
+            apply_links = job.get("apply_options", [])
+            url = apply_links[0].get("link") if apply_links else job.get("share_link", "")
+            
+            if not job_id or not title:
+                continue
+                
+            jobs.append(Job(
+                id=job_id,
+                title=title,
+                company=company,
+                location=location,
+                url=url,
+                source="Google Jobs"
+            ))
+            
+        return jobs
+    except Exception as e:
+        print(f"Error fetching Google Jobs: {e}")
         return []

@@ -6,6 +6,7 @@ load_dotenv()
 NOTION_TOKEN = os.getenv("NOTION_TOKEN")
 NOTION_DATABASE_ID = os.getenv("NOTION_DATABASE_ID")
 DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
+SERPAPI_KEY = os.getenv("SERPAPI_KEY")
 
 KEYWORDS = [
     "c++", "backend", "systems", "linux", "networking", 
