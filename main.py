@@ -1,7 +1,7 @@
 import time
 import concurrent.futures
 from config import GREENHOUSE_COMPANIES, LEVER_COMPANIES, GOOGLE_JOBS_COOLDOWN_SECONDS
-from fetchers import fetch_greenhouse_jobs, fetch_lever_jobs, fetch_hn_jobs, fetch_wwr_jobs, fetch_google_jobs, fetch_remoteok_jobs
+from fetchers import fetch_greenhouse_jobs, fetch_lever_jobs, fetch_hn_jobs, fetch_wwr_jobs, fetch_google_jobs, fetch_remoteok_jobs, fetch_arbeitnow_jobs
 from filters import is_target_job
 from integrations import add_to_notion, send_discord_alert
 from db import JobDatabase
@@ -36,6 +36,10 @@ def main():
         # Queue Remote OK
         future = executor.submit(fetch_remoteok_jobs)
         future_to_name[future] = "Remote OK"
+        
+        # Queue Arbeitnow (Germany / EU)
+        future = executor.submit(fetch_arbeitnow_jobs)
+        future_to_name[future] = "Arbeitnow (Germany)"
         
         # Queue Google Jobs (with rate limit check)
         last_google_run = db.get_meta("google_jobs_last_run")

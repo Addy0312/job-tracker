@@ -39,12 +39,12 @@ LEVER_COMPANIES = [
 
 # --- Job Board Configurations ---
 RSS_FEEDS = [
-    # We Work Remotely (Backend, Fullstack, Systems)
+    # We Work Remotely
     "https://weworkremotely.com/categories/remote-back-end-programming-jobs.rss",
     "https://weworkremotely.com/categories/remote-full-stack-programming-jobs.rss",
     "https://weworkremotely.com/categories/remote-system-administration-jobs.rss",
-    # Remote.co (Developer Jobs)
-    "https://remote.co/remote-jobs/developer/feed/"
+    # Germany specific
+    "https://germantechjobs.de/jobs/rss"
 ]
 
 # --- SerpApi Google Jobs Configurations ---

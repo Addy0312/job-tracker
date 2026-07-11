@@ -277,3 +277,36 @@ def fetch_remoteok_jobs() -> List[Job]:
     except Exception as e:
         print(f"Error fetching Remote OK jobs: {e}")
         return []
+
+def fetch_arbeitnow_jobs() -> List[Job]:
+    # Arbeitnow is heavily focused on Germany & EU, English speaking, and Visa Sponsorship
+    url = "https://arbeitnow.com/api/job-board-api"
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        
+        jobs: List[Job] = []
+        for item in data.get("data", []):
+            job_id = str(item.get("slug", ""))
+            title = item.get("title", "")
+            company = item.get("company_name", "Unknown")
+            location = item.get("location", "Germany / Remote")
+            job_url = item.get("url", "")
+            
+            if not job_id or not title:
+                continue
+                
+            jobs.append(Job(
+                id=f"arbeitnow_{job_id}",
+                title=title,
+                company=company,
+                location=location,
+                url=job_url,
+                source="Arbeitnow"
+            ))
+            
+        return jobs
+    except Exception as e:
+        print(f"Error fetching Arbeitnow jobs: {e}")
+        return []
