@@ -1,4 +1,4 @@
-from config import GREENHOUSE_COMPANIES, LEVER_COMPANIES
+from config import GREENHOUSE_COMPANIES, LEVER_COMPANIES, GOOGLE_JOBS_COOLDOWN_SECONDS
 from fetchers import fetch_greenhouse_jobs, fetch_lever_jobs, fetch_hn_jobs, fetch_wwr_jobs, fetch_google_jobs
 from filters import is_target_job
 from integrations import add_to_notion, send_discord_alert
@@ -31,10 +31,9 @@ def main():
     # --- Rate-Limited Google Jobs Fetcher ---
     last_google_run = db.get_meta("google_jobs_last_run")
     current_time = time.time()
-    COOLDOWN_SECONDS = 3 * 3600  # 3 hours
     
-    if last_google_run and (current_time - float(last_google_run)) < COOLDOWN_SECONDS:
-        hours_left = round((COOLDOWN_SECONDS - (current_time - float(last_google_run))) / 3600, 1)
+    if last_google_run and (current_time - float(last_google_run)) < GOOGLE_JOBS_COOLDOWN_SECONDS:
+        hours_left = round((GOOGLE_JOBS_COOLDOWN_SECONDS - (current_time - float(last_google_run))) / 3600, 1)
         print(f"Skipping Google Jobs: Cooldown active ({hours_left} hours remaining).")
     else:
         google_jobs = fetch_google_jobs()
