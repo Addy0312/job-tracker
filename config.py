@@ -13,19 +13,30 @@ KEYWORDS = [
     "c++", "quant", "hft", "backend", "systems", 
     "linux", "networking", "multithreading", 
     "distributed systems", "stl", "modern c++", "tcp/ip", 
-    "trading"
+    "trading", "software engineer", "developer", "platform",
+    "infrastructure", "algorithm", "researcher",
+    "data scientist", "data analyst", "business analyst", "consultant",
+    "machine learning", "ml", "ai", "quantitative researcher"
 ]
 
 ANTI_KEYWORDS = [
-    "senior", "lead", "manager", "staff", 
-    "principal", "director", "head", "vp"
+    # Seniority
+    "senior", "lead", "manager", "staff", "principal", "director", "head", "vp",
+    # Frontend / Mobile
+    "frontend", "front-end", "ui", "ux", "react", "angular", "vue", "javascript",
+    "ios", "android", "mobile", "fullstack", "full-stack", "full stack",
+    # Data / IT / Ops
+    "qa", "test", "support", "helpdesk", "administrator",
+    # Non-Tech
+    "sales", "marketing", "hr", "recruiter", "accountant", "legal", "finance"
 ]
 
 LOCATIONS = [
     "germany", "berlin", "munich", "netherlands", "amsterdam", 
     "india", "bengaluru", "ireland", "dublin", "singapore", 
     "luxembourg", "switzerland", "zurich", "sweden", "stockholm", 
-    "finland", "helsinki", "denmark", "norway", "remote"
+    "finland", "helsinki", "denmark", "norway", "remote",
+    "uk", "london", "united kingdom", "emea", "europe", "anywhere", "global"
 ]
 
 # --- Massive Free ATS Targets ---
@@ -55,12 +66,7 @@ RSS_FEEDS = [
     # We Work Remotely
     {"name": "WWR Backend", "url": "https://weworkremotely.com/categories/remote-back-end-programming-jobs.rss"},
     {"name": "WWR Fullstack", "url": "https://weworkremotely.com/categories/remote-full-stack-programming-jobs.rss"},
-    {"name": "WWR SysAdmin", "url": "https://weworkremotely.com/categories/remote-system-administration-jobs.rss"},
-    # DevITJobs Network
-    {"name": "GermanTechJobs", "url": "https://germantechjobs.de/rss"},
-    {"name": "DevITJobs NL", "url": "https://devitjobs.nl/rss"},
-    {"name": "SwissDevJobs", "url": "https://swissdevjobs.ch/rss"},
-    {"name": "DevITJobs UK", "url": "https://devitjobs.uk/rss"}
+    {"name": "WWR SysAdmin", "url": "https://weworkremotely.com/categories/remote-system-administration-jobs.rss"}
 ]
 
 # --- SerpApi Google Jobs Regional Aggregation ---
