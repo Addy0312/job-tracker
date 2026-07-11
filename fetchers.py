@@ -1,4 +1,5 @@
 import requests
+import urllib.parse
 import feedparser
 from bs4 import BeautifulSoup
 import html
@@ -87,7 +88,10 @@ def fetch_lever_jobs(company: str) -> List[Job]:
 
 def fetch_hn_jobs() -> List[Job]:
     try:
-        url = 'https://hn.algolia.com/api/v1/search_by_date?query="Ask HN: Who is hiring?"&tags=story'
+        # Strictly search for the official "Who is hiring?" thread by the official author
+        query = urllib.parse.quote("Ask HN: Who is hiring?")
+        url = f'https://hn.algolia.com/api/v1/search_by_date?query={query}&tags=story,author_whoishiring'
+        
         response = requests.get(url, timeout=10)
         response.raise_for_status()
         data = response.json()
@@ -95,6 +99,7 @@ def fetch_hn_jobs() -> List[Job]:
         if not data.get("hits"):
             return []
             
+        # Get the most recent official thread
         latest_thread_id = data['hits'][0]['objectID']
         
         thread_url = f'https://hn.algolia.com/api/v1/items/{latest_thread_id}'
@@ -109,17 +114,24 @@ def fetch_hn_jobs() -> List[Job]:
                 continue
                 
             clean_text = BeautifulSoup(html.unescape(text), "html.parser").get_text()
-            lines = clean_text.split('\n')
+            lines = clean_text.strip().split('\n')
+            if not lines:
+                continue
+                
             first_line = lines[0].strip()
             
+            # Usually formatted as: "Company | Title | Location | ONSITE/REMOTE"
             parts = first_line.split('|')
             company = parts[0].strip() if len(parts) > 0 else "Hacker News"
             
+            # The title is the first line. If it's too long, truncate it nicely.
+            job_title = first_line if len(first_line) < 150 else first_line[:147] + "..."
+            
             jobs.append(Job(
                 id=f"hn_{comment['id']}",
-                title=first_line[:150],
+                title=job_title,
                 company=company,
-                location="See Job Description",
+                location="See Job Description", # HN locations are too free-text to parse reliably
                 url=f"https://news.ycombinator.com/item?id={comment['id']}",
                 source="Hacker News"
             ))
