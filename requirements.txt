@@ -2,3 +2,5 @@ python-dotenv
 pydantic
 requests
 notion-client
+feedparser
+beautifulsoup4
