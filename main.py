@@ -1,5 +1,5 @@
 from config import GREENHOUSE_COMPANIES, LEVER_COMPANIES, GOOGLE_JOBS_COOLDOWN_SECONDS
-from fetchers import fetch_greenhouse_jobs, fetch_lever_jobs, fetch_hn_jobs, fetch_wwr_jobs, fetch_google_jobs
+from fetchers import fetch_greenhouse_jobs, fetch_lever_jobs, fetch_hn_jobs, fetch_wwr_jobs, fetch_google_jobs, fetch_remoteok_jobs
 from filters import is_target_job
 from integrations import add_to_notion, send_discord_alert
 from db import JobDatabase
@@ -27,6 +27,10 @@ def main():
     wwr_jobs = fetch_wwr_jobs()
     all_jobs.extend(wwr_jobs)
     print(f"Fetched {len(wwr_jobs)} jobs from We Work Remotely")
+        
+    remoteok_jobs = fetch_remoteok_jobs()
+    all_jobs.extend(remoteok_jobs)
+    print(f"Fetched {len(remoteok_jobs)} jobs from Remote OK")
         
     # --- Rate-Limited Google Jobs Fetcher ---
     last_google_run = db.get_meta("google_jobs_last_run")

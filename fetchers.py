@@ -144,28 +144,39 @@ def fetch_hn_jobs() -> List[Job]:
 
 def fetch_wwr_jobs() -> List[Job]:
     jobs: List[Job] = []
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    }
     try:
         for feed_url in RSS_FEEDS:
-            feed = feedparser.parse(feed_url)
-            for entry in feed.entries:
-                title_parts = entry.title.split(": ", 1)
-                if len(title_parts) == 2:
-                    company = title_parts[0].strip()
-                    title = title_parts[1].strip()
-                else:
-                    company = "Unknown"
-                    title = entry.title
-                    
-                job_id = getattr(entry, 'id', entry.link)
-                    
-                jobs.append(Job(
-                    id=str(job_id),
-                    title=title,
-                    company=company,
-                    location="Remote",
-                    url=entry.link,
-                    source="We Work Remotely"
-                ))
+            try:
+                response = requests.get(feed_url, headers=headers, timeout=10)
+                response.raise_for_status()
+                feed = feedparser.parse(response.content)
+                source_name = urllib.parse.urlparse(feed_url).netloc
+                
+                for entry in feed.entries:
+                    title_parts = entry.title.split(": ", 1)
+                    if len(title_parts) == 2:
+                        company = title_parts[0].strip()
+                        title = title_parts[1].strip()
+                    else:
+                        company = "Unknown"
+                        title = entry.title
+                        
+                    job_id = getattr(entry, 'id', entry.link)
+                        
+                    jobs.append(Job(
+                        id=str(job_id),
+                        title=title,
+                        company=company,
+                        location="Remote",
+                        url=entry.link,
+                        source=source_name
+                    ))
+            except Exception as e:
+                print(f"Error fetching {feed_url}: {e}")
+                continue
         return jobs
     except Exception as e:
         print(f"Error fetching RSS jobs: {e}")
@@ -223,3 +234,44 @@ def fetch_google_jobs() -> List[Job]:
     except Exception as e:
         print(f"Error fetching Google Jobs: {e}")
         return jobs
+
+def fetch_remoteok_jobs() -> List[Job]:
+    url = "https://remoteok.com/api"
+    # Remote OK blocks default python-requests user agents. We must spoof a standard browser.
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    }
+    
+    try:
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        
+        jobs: List[Job] = []
+        for item in data:
+            # The first object in the Remote OK array is a legal disclaimer, not a job.
+            if "legal" in item:
+                continue
+                
+            job_id = str(item.get("id", ""))
+            title = item.get("position", "")
+            company = item.get("company", "Unknown")
+            location = item.get("location", "Remote")
+            job_url = item.get("url", "")
+            
+            if not job_id or not title:
+                continue
+                
+            jobs.append(Job(
+                id=f"remoteok_{job_id}",
+                title=title,
+                company=company,
+                location=location,
+                url=job_url,
+                source="Remote OK"
+            ))
+            
+        return jobs
+    except Exception as e:
+        print(f"Error fetching Remote OK jobs: {e}")
+        return []
