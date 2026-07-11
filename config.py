@@ -8,22 +8,12 @@ NOTION_DATABASE_ID = os.getenv("NOTION_DATABASE_ID")
 DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
 SERPAPI_KEY = os.getenv("SERPAPI_KEY")
 
-# --- Job Board Configurations ---
-RSS_FEEDS = [
-    "https://weworkremotely.com/categories/remote-back-end-programming-jobs.rss"
-]
-
-# --- SerpApi Google Jobs Configurations ---
-# Google Jobs returns 10 results per page. 
-# 1 Page = 1 API Credit.
-SERPAPI_PAGES = 1 
-SERPAPI_QUERY = '("C++" OR "Backend" OR "Systems") AND ("Software Engineer" OR "Developer") ("Germany" OR "Netherlands" OR "Singapore" OR "Remote")'
-GOOGLE_JOBS_COOLDOWN_SECONDS = 3 * 3600  # 3 hours
-
+# --- Primary Targeting Configurations ---
 KEYWORDS = [
-    "c++", "backend", "systems", "linux", "networking", 
-    "multithreading", "distributed systems", "stl", 
-    "modern c++", "tcp/ip", "quant", "hft", "trading"
+    "c++", "quant", "hft", "backend", "systems", 
+    "linux", "networking", "multithreading", 
+    "distributed systems", "stl", "modern c++", "tcp/ip", 
+    "trading"
 ]
 
 ANTI_KEYWORDS = [
@@ -40,12 +30,24 @@ LOCATIONS = [
 
 GREENHOUSE_COMPANIES = [
     "datadog", "stripe", "cloudflare", 
-    # "optiver", 
     "janestreet", "robinhood"
 ]
 
 LEVER_COMPANIES = [
-    "palantir", 
-    # "revolut", 
-    # "checkoutcom"
+    "palantir"
 ]
+
+# --- Job Board Configurations ---
+RSS_FEEDS = [
+    "https://weworkremotely.com/categories/remote-back-end-programming-jobs.rss"
+]
+
+# --- SerpApi Google Jobs Configurations ---
+SERPAPI_PAGES = 1 
+GOOGLE_JOBS_COOLDOWN_SECONDS = 3 * 3600  # 3 hours
+
+# Dynamically construct the query to remain DRY.
+# We slice the first 5 elements to prevent exceeding Google's 32-word query limit.
+_kw_str = " OR ".join([f'"{k.title()}"' for k in KEYWORDS[:5]])
+_loc_str = " OR ".join([f'"{l.title()}"' for l in LOCATIONS[:5]])
+SERPAPI_QUERY = f'({_kw_str}) AND ("Software Engineer" OR "Developer" OR "Engineer") ({_loc_str})'
