@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import html
 from typing import List
 from models import Job
-from config import SERPAPI_KEY, SERPAPI_QUERY, SERPAPI_PAGES, RSS_FEEDS
+from config import SERPAPI_KEY, SERPAPI_PAGES, RSS_FEEDS
 
 def fetch_greenhouse_jobs(company: str) -> List[Job]:
     url = f"https://boards-api.greenhouse.io/v1/boards/{company}/jobs"
@@ -184,20 +184,22 @@ def fetch_wwr_jobs() -> List[Job]:
         print(f"Error fetching RSS jobs: {e}")
         return []
 
-def fetch_google_jobs() -> List[Job]:
+def fetch_google_jobs(search_config: dict) -> List[Job]:
     if not SERPAPI_KEY:
         print("Warning: SERPAPI_KEY is not set. Skipping Google Jobs.")
         return []
         
     url = "https://serpapi.com/search.json"
     jobs: List[Job] = []
+    search_name = search_config.get("name", "Unknown")
     
     try:
         for page in range(SERPAPI_PAGES):
             params = {
                 "engine": "google_jobs",
-                "q": SERPAPI_QUERY,
+                "q": search_config["query"],
                 "hl": "en",
+                "gl": search_config["gl"], # Injects the regional targeting
                 "chips": "date_posted:3days",
                 "start": page * 10,
                 "api_key": SERPAPI_KEY
@@ -209,7 +211,7 @@ def fetch_google_jobs() -> List[Job]:
             
             results = data.get("jobs_results", [])
             if not results:
-                break # No more pages available
+                break 
                 
             for job in results:
                 job_id = job.get("job_id", "")
@@ -229,12 +231,12 @@ def fetch_google_jobs() -> List[Job]:
                     company=company,
                     location=location,
                     url=job_url,
-                    source="Google Jobs"
+                    source=f"Google Jobs ({search_name})"
                 ))
                 
         return jobs
     except Exception as e:
-        print(f"Error fetching Google Jobs: {e}")
+        print(f"Error fetching Google Jobs for {search_name}: {e}")
         return jobs
 
 def fetch_remoteok_jobs() -> List[Job]:

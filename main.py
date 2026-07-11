@@ -1,6 +1,6 @@
 import time
 import concurrent.futures
-from config import GREENHOUSE_COMPANIES, LEVER_COMPANIES, GOOGLE_JOBS_COOLDOWN_SECONDS
+from config import GREENHOUSE_COMPANIES, LEVER_COMPANIES, GOOGLE_JOBS_COOLDOWN_SECONDS, SERPAPI_SEARCHES
 from fetchers import fetch_greenhouse_jobs, fetch_lever_jobs, fetch_hn_jobs, fetch_wwr_jobs, fetch_google_jobs, fetch_remoteok_jobs, fetch_arbeitnow_jobs
 from filters import is_target_job
 from integrations import add_to_notion, send_discord_alert
@@ -41,7 +41,7 @@ def main():
         future = executor.submit(fetch_arbeitnow_jobs)
         future_to_name[future] = "Arbeitnow (Germany)"
         
-        # Queue Google Jobs (with rate limit check)
+        # Queue Google Jobs (Regional Grouped Searches)
         last_google_run = db.get_meta("google_jobs_last_run")
         current_time = time.time()
         
@@ -49,8 +49,9 @@ def main():
             hours_left = round((GOOGLE_JOBS_COOLDOWN_SECONDS - (current_time - float(last_google_run))) / 3600, 1)
             print(f"Skipping Google Jobs: Cooldown active ({hours_left} hours remaining).")
         else:
-            future = executor.submit(fetch_google_jobs)
-            future_to_name[future] = "Google Jobs"
+            for search_config in SERPAPI_SEARCHES:
+                future = executor.submit(fetch_google_jobs, search_config)
+                future_to_name[future] = f"Google Jobs ({search_config['name']})"
             db.set_meta("google_jobs_last_run", str(current_time))
             
         # Collect results as they complete

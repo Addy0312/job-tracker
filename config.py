@@ -25,16 +25,21 @@ LOCATIONS = [
     "germany", "berlin", "munich", "netherlands", "amsterdam", 
     "india", "bengaluru", "ireland", "dublin", "singapore", 
     "luxembourg", "switzerland", "zurich", "sweden", "stockholm", 
-    "finland", "helsinki", "denmark", "remote"
+    "finland", "helsinki", "denmark", "norway", "remote"
 ]
 
+# --- Massive Free ATS Targets ---
 GREENHOUSE_COMPANIES = [
-    "datadog", "stripe", "cloudflare", 
-    "janestreet", "robinhood"
+    "datadog", "stripe", "cloudflare", "janestreet", "robinhood",
+    "snowflake", "mongodb", "redis", "hashicorp", "grafanalabs",
+    "cockroachlabs", "singlestore", "hudsonrivertrading", "drw",
+    "flowtraders", "towerresearchcapital", "mavensecurities",
+    "akunacapital", "deliveryhero", "cisco", "intel"
 ]
 
 LEVER_COMPANIES = [
-    "palantir"
+    "palantir", "confluent", "clickhouse", "wise", "klarna", 
+    "gresearch"
 ]
 
 # --- Job Board Configurations ---
@@ -43,21 +48,40 @@ RSS_FEEDS = [
     "https://weworkremotely.com/categories/remote-back-end-programming-jobs.rss",
     "https://weworkremotely.com/categories/remote-full-stack-programming-jobs.rss",
     "https://weworkremotely.com/categories/remote-system-administration-jobs.rss",
-    
-    # DevITJobs Network (Native European Tech Boards)
-    "https://germantechjobs.de/jobs/rss",
-    "https://devitjobs.nl/jobs/rss",      # Netherlands
-    "https://swissdevjobs.ch/jobs/rss",   # Switzerland
-    "https://devitjobs.uk/jobs/rss",      # UK (Bonus)
-    "https://remoteitjobs.com/jobs/rss"   # Global Remote
+    # DevITJobs Network (Fixed URLs)
+    "https://germantechjobs.de/rss",
+    "https://devitjobs.nl/rss",      
+    "https://swissdevjobs.ch/rss",   
+    "https://devitjobs.uk/rss"     
 ]
 
-# --- SerpApi Google Jobs Configurations ---
+# --- SerpApi Google Jobs Regional Aggregation ---
+# Budget: 250 credits/mo. 4 searches * 2 runs/day = 240 credits/mo.
 SERPAPI_PAGES = 1 
-GOOGLE_JOBS_COOLDOWN_SECONDS = 3 * 3600  # 3 hours
+GOOGLE_JOBS_COOLDOWN_SECONDS = 12 * 3600  # 12 hours
 
-# Dynamically construct the query to remain DRY.
-# We slice the first 5 elements to prevent exceeding Google's 32-word query limit.
-_kw_str = " OR ".join([f'"{k.title()}"' for k in KEYWORDS[:5]])
-_loc_str = " OR ".join([f'"{l.title()}"' for l in LOCATIONS[:5]])
-SERPAPI_QUERY = f'({_kw_str}) AND ("Software Engineer" OR "Developer" OR "Engineer") ({_loc_str})'
+_kw_str = " OR ".join([f'"{k.title()}"' for k in KEYWORDS[:4]])
+_base_query = f'({_kw_str}) AND ("Software Engineer" OR "Developer")'
+
+SERPAPI_SEARCHES = [
+    {
+        "name": "Nordics & Baltics",
+        "query": f'{_base_query} ("Sweden" OR "Finland" OR "Denmark" OR "Norway" OR "Estonia")',
+        "gl": "se" # Geo-target Sweden
+    },
+    {
+        "name": "Central Europe",
+        "query": f'{_base_query} ("Belgium" OR "Austria" OR "Poland" OR "Czech Republic" OR "Luxembourg")',
+        "gl": "pl" # Geo-target Poland
+    },
+    {
+        "name": "Ireland & UK",
+        "query": f'{_base_query} ("Ireland" OR "Dublin" OR "London")',
+        "gl": "ie" # Geo-target Ireland
+    },
+    {
+        "name": "Asia",
+        "query": f'{_base_query} ("Singapore" OR "India" OR "Bengaluru")',
+        "gl": "sg" # Geo-target Singapore
+    }
+]
