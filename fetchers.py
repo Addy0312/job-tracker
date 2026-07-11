@@ -145,12 +145,14 @@ def fetch_hn_jobs() -> List[Job]:
 def fetch_wwr_jobs() -> List[Job]:
     jobs: List[Job] = []
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.5"
     }
     try:
         for feed_url in RSS_FEEDS:
             try:
-                response = requests.get(feed_url, headers=headers, timeout=10)
+                response = requests.get(feed_url, headers=headers, timeout=30)
                 response.raise_for_status()
                 feed = feedparser.parse(response.content)
                 source_name = urllib.parse.urlparse(feed_url).netloc
