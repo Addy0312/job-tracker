@@ -1,7 +1,7 @@
 import time
 import concurrent.futures
-from config import GREENHOUSE_COMPANIES, LEVER_COMPANIES, GOOGLE_JOBS_COOLDOWN_SECONDS, SERPAPI_SEARCHES
-from fetchers import fetch_greenhouse_jobs, fetch_lever_jobs, fetch_hn_jobs, fetch_wwr_jobs, fetch_google_jobs, fetch_remoteok_jobs, fetch_arbeitnow_jobs
+from config import GREENHOUSE_COMPANIES, LEVER_COMPANIES, ASHBY_COMPANIES, GOOGLE_JOBS_COOLDOWN_SECONDS, SERPAPI_SEARCHES, RSS_FEEDS
+from fetchers import fetch_greenhouse_jobs, fetch_lever_jobs, fetch_ashby_jobs, fetch_hn_jobs, fetch_rss_feed, fetch_google_jobs, fetch_remoteok_jobs, fetch_arbeitnow_jobs
 from filters import is_target_job
 from integrations import add_to_notion, send_discord_alert
 from db import JobDatabase
@@ -25,13 +25,19 @@ def main():
             future = executor.submit(fetch_lever_jobs, company)
             future_to_name[future] = f"Lever: {company}"
             
+        # Queue Ashby companies
+        for company in ASHBY_COMPANIES:
+            future = executor.submit(fetch_ashby_jobs, company)
+            future_to_name[future] = f"Ashby: {company}"
+            
         # Queue Hacker News
         future = executor.submit(fetch_hn_jobs)
         future_to_name[future] = "Hacker News"
         
-        # Queue RSS Feeds (We Work Remotely, Remote.co)
-        future = executor.submit(fetch_wwr_jobs)
-        future_to_name[future] = "RSS Feeds"
+        # Queue RSS Feeds Individually
+        for feed in RSS_FEEDS:
+            future = executor.submit(fetch_rss_feed, feed)
+            future_to_name[future] = f"RSS: {feed['name']}"
         
         # Queue Remote OK
         future = executor.submit(fetch_remoteok_jobs)

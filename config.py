@@ -30,29 +30,37 @@ LOCATIONS = [
 
 # --- Massive Free ATS Targets ---
 GREENHOUSE_COMPANIES = [
+    # Standard Slugs
     "datadog", "stripe", "cloudflare", "janestreet", "robinhood",
-    "snowflake", "mongodb", "redis", "hashicorp", "grafanalabs",
-    "cockroachlabs", "singlestore", "hudsonrivertrading", "drw",
-    "flowtraders", "towerresearchcapital", "mavensecurities",
-    "akunacapital", "deliveryhero", "cisco", "intel"
+    "mongodb", "grafanalabs", "cockroachlabs", "singlestore", 
+    "flowtraders", "towerresearchcapital", "akunacapital",
+    # Hidden/Custom Slugs
+    "wehrtyou",                   # Hudson River Trading
+    "drweng",                     # DRW
+    "mavensecuritiesholdingltd",  # Maven Securities
+    "clickhouse"                  # ClickHouse
 ]
 
 LEVER_COMPANIES = [
-    "palantir", "confluent", "clickhouse", "wise", "klarna", 
-    "gresearch"
+    "palantir" 
+    # Removed: Wise, Klarna, G-Research (Custom/Workday)
+]
+
+ASHBY_COMPANIES = [
+    "redis", "confluent"
 ]
 
 # --- Job Board Configurations ---
 RSS_FEEDS = [
     # We Work Remotely
-    "https://weworkremotely.com/categories/remote-back-end-programming-jobs.rss",
-    "https://weworkremotely.com/categories/remote-full-stack-programming-jobs.rss",
-    "https://weworkremotely.com/categories/remote-system-administration-jobs.rss",
-    # DevITJobs Network (Fixed URLs)
-    "https://germantechjobs.de/rss",
-    "https://devitjobs.nl/rss",      
-    "https://swissdevjobs.ch/rss",   
-    "https://devitjobs.uk/rss"     
+    {"name": "WWR Backend", "url": "https://weworkremotely.com/categories/remote-back-end-programming-jobs.rss"},
+    {"name": "WWR Fullstack", "url": "https://weworkremotely.com/categories/remote-full-stack-programming-jobs.rss"},
+    {"name": "WWR SysAdmin", "url": "https://weworkremotely.com/categories/remote-system-administration-jobs.rss"},
+    # DevITJobs Network
+    {"name": "GermanTechJobs", "url": "https://germantechjobs.de/rss"},
+    {"name": "DevITJobs NL", "url": "https://devitjobs.nl/rss"},
+    {"name": "SwissDevJobs", "url": "https://swissdevjobs.ch/rss"},
+    {"name": "DevITJobs UK", "url": "https://devitjobs.uk/rss"}
 ]
 
 # --- SerpApi Google Jobs Regional Aggregation ---

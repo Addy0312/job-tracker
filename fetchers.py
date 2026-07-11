@@ -29,6 +29,37 @@ def fetch_greenhouse_jobs(company: str) -> List[Job]:
         print(f"Error fetching Greenhouse jobs for {company}: {e}")
         return []
 
+def fetch_ashby_jobs(company: str) -> List[Job]:
+    url = f"https://api.ashbyhq.com/posting-api/job-board/{company}?includeCompensation=true"
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        
+        jobs: List[Job] = []
+        for job in data.get("jobs", []):
+            job_id = str(job.get("id", ""))
+            title = job.get("title", "")
+            location = job.get("location", "Unknown")
+            job_url = job.get("jobUrl", "")
+            
+            if not job_id or not title:
+                continue
+                
+            jobs.append(Job(
+                id=f"ashby_{job_id}",
+                title=title,
+                company=company.capitalize(),
+                location=location,
+                url=job_url,
+                source="Ashby"
+            ))
+            
+        return jobs
+    except Exception as e:
+        print(f"Error fetching Ashby jobs for {company}: {e}")
+        return []
+
 def fetch_lever_jobs(company: str) -> List[Job]:
     # Lever has two instances: Global and EU. 
     instances = ["api.lever.co", "api.eu.lever.co"]
@@ -142,7 +173,7 @@ def fetch_hn_jobs() -> List[Job]:
         print(f"Error fetching Hacker News jobs: {e}")
         return []
 
-def fetch_wwr_jobs() -> List[Job]:
+def fetch_rss_feed(feed: dict) -> List[Job]:
     jobs: List[Job] = []
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -150,38 +181,32 @@ def fetch_wwr_jobs() -> List[Job]:
         "Accept-Language": "en-US,en;q=0.5"
     }
     try:
-        for feed_url in RSS_FEEDS:
-            try:
-                response = requests.get(feed_url, headers=headers, timeout=30)
-                response.raise_for_status()
-                feed = feedparser.parse(response.content)
-                source_name = urllib.parse.urlparse(feed_url).netloc
+        response = requests.get(feed["url"], headers=headers, timeout=30)
+        response.raise_for_status()
+        parsed_feed = feedparser.parse(response.content)
+        
+        for entry in parsed_feed.entries:
+            title_parts = entry.title.split(": ", 1)
+            if len(title_parts) == 2:
+                company = title_parts[0].strip()
+                title = title_parts[1].strip()
+            else:
+                company = "Unknown"
+                title = entry.title
                 
-                for entry in feed.entries:
-                    title_parts = entry.title.split(": ", 1)
-                    if len(title_parts) == 2:
-                        company = title_parts[0].strip()
-                        title = title_parts[1].strip()
-                    else:
-                        company = "Unknown"
-                        title = entry.title
-                        
-                    job_id = getattr(entry, 'id', entry.link)
-                        
-                    jobs.append(Job(
-                        id=str(job_id),
-                        title=title,
-                        company=company,
-                        location="Remote",
-                        url=entry.link,
-                        source=source_name
-                    ))
-            except Exception as e:
-                print(f"Error fetching {feed_url}: {e}")
-                continue
+            job_id = getattr(entry, 'id', entry.link)
+                
+            jobs.append(Job(
+                id=str(job_id),
+                title=title,
+                company=company,
+                location="Remote",
+                url=entry.link,
+                source=feed["name"]
+            ))
         return jobs
     except Exception as e:
-        print(f"Error fetching RSS jobs: {e}")
+        print(f"Error fetching RSS feed {feed['name']}: {e}")
         return []
 
 def fetch_google_jobs(search_config: dict) -> List[Job]:
