@@ -10,63 +10,57 @@ SERPAPI_KEY = os.getenv("SERPAPI_KEY")
 
 # --- Primary Targeting Configurations ---
 KEYWORDS = [
-    "c++", "quant", "hft", "backend", "systems", 
-    "linux", "networking", "multithreading", 
-    "distributed systems", "stl", "modern c++", "tcp/ip", 
-    "trading", "software engineer", "developer", "platform",
-    "infrastructure", "algorithm", "researcher",
-    "data scientist", "data analyst", "business analyst", "consultant",
-    "machine learning", "ml", "ai", "quantitative researcher"
+    "data analyst", "business analyst", "finance analyst", 
+    "associate consultant", "business development executive", 
+    "business development associate", "business associate", 
+    "business intelligence", "bi developer",
+    "analytics", "strategy", "operations", "data science",
+    "consultant", "management consultant"
 ]
 
 ANTI_KEYWORDS = [
     # Seniority
     "senior", "lead", "manager", "staff", "principal", "director", "head", "vp",
-    # Frontend / Mobile
-    "frontend", "front-end", "ui", "ux", "react", "angular", "vue", "javascript",
-    "ios", "android", "mobile", "fullstack", "full-stack", "full stack",
+    # Software Engineering / Tech
+    "software", "software engineering", "software engineer", "frontend", "front-end", 
+    "ui", "ux", "react", "angular", "vue", "javascript", "ios", "android", "mobile", 
+    "fullstack", "full-stack", "full stack", "backend", "devops", "c++", "java", 
+    "python developer", "systems engineer", "sre", "cloud engineer",
     # Data / IT / Ops
-    "qa", "test", "support", "helpdesk", "administrator",
-    # Non-Tech
-    "sales", "marketing", "hr", "recruiter", "accountant", "legal", "finance"
+    "qa", "test", "support", "helpdesk", "administrator", "it"
 ]
 
 LOCATIONS = [
-    "germany", "berlin", "munich", "netherlands", "amsterdam", 
-    "india", "bengaluru", "ireland", "dublin", "singapore", 
-    "luxembourg", "switzerland", "zurich", "sweden", "stockholm", 
-    "finland", "helsinki", "denmark", "norway", "remote",
-    "uk", "london", "united kingdom", "emea", "europe", "anywhere", "global"
+    "india", "bengaluru", "bangalore", "mumbai", "gurgaon", "noida", 
+    "hyderabad", "pune",
+    "remote", "singapore", "london", "new york", "ny", "nyc"
 ]
 
 # --- Massive Free ATS Targets ---
 GREENHOUSE_COMPANIES = [
-    # Standard Slugs
-    "datadog", "stripe", "cloudflare", "janestreet", "robinhood",
-    "mongodb", "grafanalabs", "cockroachlabs", "singlestore", 
-    "flowtraders", "towerresearchcapital", "akunacapital",
-    # Hidden/Custom Slugs
-    "wehrtyou",                   # Hudson River Trading
-    "drweng",                     # DRW
-    "mavensecuritiesholdingltd",  # Maven Securities
-    "clickhouse"                  # ClickHouse
+    "stripe", "razorpay", "groww", "airbnb", "uber", "doordash", 
+    "instacart", "coinbase", "brex", "ramp", "gusto", "square", 
+    "adyen", "swiggy", "meesho", "bharatpe", "cleartax", "postman",
+    "browserstack", "mindtickle", "chargebee", "zenoti"
 ]
 
 LEVER_COMPANIES = [
-    "palantir" 
-    # Removed: Wise, Klarna, G-Research (Custom/Workday)
+    "phonepe", "myntra", "lyft", "kraken", "klarna", "revolut", 
+    "n26", "monzo", "zomato", "zepto", "upstox", "slice", 
+    "plaid", "affirm", "chime", "robinhood", "wealthsimple"
 ]
 
 ASHBY_COMPANIES = [
-    "redis", "confluent"
+    "khatabook", "cred", "checkoutcom", "navi", "spinny", "cars24", 
+    "paytm", "flipkart", "binance", "pliant", "deel", "remote", 
+    "oyster", "rippling", "notion", "figma", "canva"
 ]
 
 # --- Job Board Configurations ---
 RSS_FEEDS = [
-    # We Work Remotely
-    {"name": "WWR Backend", "url": "https://weworkremotely.com/categories/remote-back-end-programming-jobs.rss"},
-    {"name": "WWR Fullstack", "url": "https://weworkremotely.com/categories/remote-full-stack-programming-jobs.rss"},
-    {"name": "WWR SysAdmin", "url": "https://weworkremotely.com/categories/remote-system-administration-jobs.rss"}
+    {"name": "WWR Management & Finance", "url": "https://weworkremotely.com/categories/remote-management-and-finance-jobs.rss"},
+    {"name": "WWR Sales & Marketing", "url": "https://weworkremotely.com/categories/remote-sales-and-marketing-jobs.rss"},
+    {"name": "WWR Product", "url": "https://weworkremotely.com/categories/remote-product-jobs.rss"}
 ]
 
 # --- SerpApi Google Jobs Regional Aggregation ---
@@ -74,28 +68,30 @@ RSS_FEEDS = [
 SERPAPI_PAGES = 1 
 GOOGLE_JOBS_COOLDOWN_SECONDS = 12 * 3600  # 12 hours
 
-_kw_str = " OR ".join([f'"{k.title()}"' for k in KEYWORDS[:4]])
-_base_query = f'({_kw_str}) AND ("Software Engineer" OR "Developer")'
+_roles = '("Data Analyst" OR "Business Analyst" OR "Consultant" OR "Finance Analyst" OR "Strategy" OR "Operations")'
+_big_banks_consultancies = '("JPMorgan" OR "Citi" OR "Citicorp" OR "Deloitte" OR "EY" OR "Ernst & Young" OR "ZS Associates" OR "Goldman Sachs" OR "Morgan Stanley" OR "PwC" OR "KPMG")'
+_indian_fintech = '("Myntra" OR "PhonePe" OR "Razorpay" OR "Cred" OR "Groww" OR "Khatabook" OR "Stripe" OR "Checkout.com" OR "Swiggy" OR "Zomato" OR "Zepto" OR "Meesho" OR "BharatPe" OR "Upstox" OR "Slice" OR "Navi" OR "Paytm")'
+_global_remote = '("Remote" OR "Anywhere")'
 
 SERPAPI_SEARCHES = [
     {
-        "name": "Nordics & Baltics",
-        "query": f'{_base_query} ("Sweden" OR "Finland" OR "Denmark" OR "Norway" OR "Estonia")',
-        "gl": "se" # Geo-target Sweden
+        "name": "Big Banks & Consultancies in India",
+        "query": f'{_roles} AND {_big_banks_consultancies}',
+        "gl": "in"
     },
     {
-        "name": "Central Europe",
-        "query": f'{_base_query} ("Belgium" OR "Austria" OR "Poland" OR "Czech Republic" OR "Luxembourg")',
-        "gl": "pl" # Geo-target Poland
+        "name": "Big Banks & Consultancies Global/US",
+        "query": f'{_roles} AND {_big_banks_consultancies}',
+        "gl": "us"
     },
     {
-        "name": "Ireland & UK",
-        "query": f'{_base_query} ("Ireland" OR "Dublin" OR "London")',
-        "gl": "ie" # Geo-target Ireland
+        "name": "Indian Fintech & E-Commerce",
+        "query": f'{_roles} AND {_indian_fintech}',
+        "gl": "in"
     },
     {
-        "name": "Asia",
-        "query": f'{_base_query} ("Singapore" OR "India" OR "Bengaluru")',
-        "gl": "sg" # Geo-target Singapore
+        "name": "Global Remote Business/Data Roles",
+        "query": f'{_roles} AND {_global_remote}',
+        "gl": "us"
     }
 ]
