@@ -25,6 +25,12 @@ def fetch_greenhouse_jobs(company: str) -> List[Job]:
                 source="Greenhouse"
             ))
         return jobs
+    except requests.exceptions.HTTPError as e:
+        if e.response.status_code == 404:
+            pass # Suppress 404 noise for inactive job boards
+        else:
+            print(f"Error fetching Greenhouse jobs for {company}: {e}")
+        return []
     except Exception as e:
         print(f"Error fetching Greenhouse jobs for {company}: {e}")
         return []
@@ -56,6 +62,12 @@ def fetch_ashby_jobs(company: str) -> List[Job]:
             ))
             
         return jobs
+    except requests.exceptions.HTTPError as e:
+        if e.response.status_code == 404:
+            pass # Suppress 404 noise for inactive job boards
+        else:
+            print(f"Error fetching Ashby jobs for {company}: {e}")
+        return []
     except Exception as e:
         print(f"Error fetching Ashby jobs for {company}: {e}")
         return []

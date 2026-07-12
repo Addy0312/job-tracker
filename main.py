@@ -79,7 +79,7 @@ def main():
             continue
             
         if is_target_job(job):
-            print(f"🎯 Match found: {job.title} at {job.company}")
+            print(f"Match found: {job.title} at {job.company}")
             add_to_notion(job)
             send_discord_alert(job)
             matches_found += 1

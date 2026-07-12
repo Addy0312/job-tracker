@@ -37,23 +37,21 @@ LOCATIONS = [
 ]
 
 # --- Massive Free ATS Targets ---
+# Note: The following companies were removed as they moved to internal ATS or closed public API access:
+# uber, doordash, razorpay, swiggy, bharatpe, cleartax, browserstack, chargebee, khatabook, checkoutcom, 
+# spinny, cars24, flipkart, canva, myntra, klarna, revolut, zomato, zepto, upstox, rippling
 GREENHOUSE_COMPANIES = [
-    "stripe", "razorpay", "groww", "airbnb", "uber", "doordash", 
-    "instacart", "coinbase", "brex", "ramp", "gusto", "square", 
-    "adyen", "swiggy", "meesho", "bharatpe", "cleartax", "postman",
-    "browserstack", "mindtickle", "chargebee", "zenoti"
+    "stripe", "groww", "airbnb", "instacart", "coinbase", "brex", "gusto", "block", # block = square
+    "adyen", "postman", "zenoti", "lyft", "phonepe", "monzo", "n26", "slice", 
+    "chime", "affirm", "robinhood", "remote", "figma"
 ]
 
 LEVER_COMPANIES = [
-    "phonepe", "myntra", "lyft", "kraken", "klarna", "revolut", 
-    "n26", "monzo", "zomato", "zepto", "upstox", "slice", 
-    "plaid", "affirm", "chime", "robinhood", "wealthsimple"
+    "kraken", "plaid", "wealthsimple", "meesho", "mindtickle", "paytm", "cred", "binance"
 ]
 
 ASHBY_COMPANIES = [
-    "khatabook", "cred", "checkoutcom", "navi", "spinny", "cars24", 
-    "paytm", "flipkart", "binance", "pliant", "deel", "remote", 
-    "oyster", "rippling", "notion", "figma", "canva"
+    "navi", "pliant", "deel", "oyster", "notion", "ramp"
 ]
 
 # --- Job Board Configurations ---
